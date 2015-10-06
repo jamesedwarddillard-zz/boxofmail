@@ -17,16 +17,21 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var searchImageView: UIImageView!
     @IBOutlet weak var navImageView: UIImageView!
     @IBOutlet weak var singleImageView: UIImageView!
+    @IBOutlet weak var rescheduleImageView: UIImageView!
     
     // image icons here
     @IBOutlet weak var laterIconImageView: UIImageView!
     @IBOutlet weak var archiveIconImageView: UIImageView!
     @IBOutlet weak var deleteIconImageView: UIImageView!
     @IBOutlet weak var listIconImageView: UIImageView!
+    @IBOutlet weak var menuImageView: UIImageView!
     
     //bacgkround goes here
     @IBOutlet weak var backgroundView: UIView!
+    @IBOutlet weak var rescheduleView: UIView!
+    @IBOutlet weak var listView: UIView!
     
+    @IBOutlet weak var feedView: UIView!
     
     // view for single message and icons
     @IBOutlet weak var topMessageView: UIView!
@@ -43,12 +48,17 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
 
         scrollView.contentSize = feedImageView.image!.size
         scrollView.delegate = self
+        self.rescheduleView.alpha = 0
+        self.listView.alpha = 0
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     @IBAction func onCustomPan(sender: UIPanGestureRecognizer) {
         var location = sender.locationInView(view)
@@ -152,7 +162,22 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                             self.hideMessage()
                     })
                     
-                
+                }
+                // swiped left
+                else if singleImageOriginX <= 260 && velocity.x < 0 {
+                    UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
+                        self.singleImageView.center.x = -(self.singleImageView.frame.width + self.originalSingleImage.x)
+                        self.laterIconImageView.alpha = 0
+                        self.listIconImageView.alpha = 0
+                        
+                        
+                        }, completion: { (completed) -> Void in
+                            UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
+                                self.rescheduleView.alpha = 1
+                                }, completion: { (completed) -> Void in
+                                    //yup
+                            })
+                    })
                     
                 }
                 
@@ -173,6 +198,16 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                 //nothing
         }
         
+    }
+    
+    @IBAction func onRescheduleButton(sender: AnyObject) {
+        self.rescheduleView.alpha = 0
+        hideMessage()
+    }
+    
+    @IBAction func onListButton(sender: AnyObject) {
+        self.listView.alpha = 0
+        hideMessage()
     }
 
    
