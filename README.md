@@ -10,6 +10,6 @@ Completed user stories:
 * If a user drags to the right, the message disappears (being archived or deleted)
 * If a user drags to the left they get later options for the message; if they choose an option, the message disappears
 
-![box of mail](carousel.gif)
+![box of mail](boxofmail.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
