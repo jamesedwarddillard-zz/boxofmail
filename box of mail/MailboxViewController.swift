@@ -132,18 +132,27 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
         
         // notice when panning is completed
         else if sender.state == UIGestureRecognizerState.Ended{
-            var swipeLeftShort = singleImageOriginX > -60 && singleImageOriginX < 60
-            var swipeLeftLong = singleImageOriginX >= 60 && velocity.x < 0
-            var swipeRightShort = singleImageOriginX <= -60 && velocity.x > 0
-            var singleMessageReset = swipeLeftShort || swipeLeftLong || swipeRightShort
+            var swipeBackEarly = singleImageOriginX > -60 && singleImageOriginX < 60
+            var swipeBackLeft = singleImageOriginX >= 60 && velocity.x < 0
+            var swipeBackRight = singleImageOriginX <= -60 && velocity.x > 0
+            var singleMessageReset = swipeBackEarly || swipeBackLeft || swipeBackRight
 
             UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
                 if singleMessageReset {
                     self.singleImageView.center.x = self.originalSingleImage.x
                 }
                 
-                else if singleImageOriginX >= 60 && velocity.x > 0 {
+                else if singleImageOriginX >= 60 && velocity.x > 0 { // swiped right
+                    UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
+                        self.singleImageView.center = CGPoint(x: self.singleImageView.center.x + self.singleImageView.frame.width, y: self.originalSingleImage.y)
+                        self.archiveIconImageView.alpha = 0
+                        self.deleteIconImageView.alpha = 0
+                        
+                        }, completion: { (completed) -> Void in
+                            self.hideMessage()
+                    })
                     
+                
                     
                 }
                 
