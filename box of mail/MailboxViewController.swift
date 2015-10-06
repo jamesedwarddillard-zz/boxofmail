@@ -33,6 +33,7 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
     
     //location variables
     var originalSingleImage: CGPoint!
+    var originalFeedImage: CGPoint!
     var laterIconValue: CGFloat!
     var archiveIconValue: CGFloat!
     
@@ -60,9 +61,9 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
             // set the scene
             originalSingleImage = singleImageView.center
             self.laterIconImageView.center.x = 270 + (self.laterIconImageView.frame.width/2)
-            self.listIconImageView.center.x = 46 + (self.listIconImageView.frame.width/2)
-            self.archiveIconImageView.center.x = 20 + (self.archiveIconImageView.center.x/2)
-            self.deleteIconImageView.center.x = 272 + (self.deleteIconImageView.frame.width/2)
+            self.listIconImageView.center.x = 270 + (self.listIconImageView.frame.width/2)
+            self.archiveIconImageView.center.x = 46 + (self.archiveIconImageView.frame.width/2)
+            self.deleteIconImageView.center.x = 46 + (self.deleteIconImageView.frame.width/2)
             
             // hide icons
             
@@ -85,17 +86,41 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                 
                 // icon stuff
                 if (singleImageOriginX > -60 && singleImageOriginX <= 60){
-                   
-                    // make icons appear
-                    self.laterIconImageView.alpha = 1
-                    self.archiveIconImageView.alpha = 1
         
                 }
                 else {
                     // make icons trail single image
                     self.laterIconImageView.center.x = self.singleImageView.frame.width + translation.x + 20
+                    self.listIconImageView.center.x = self.singleImageView.frame.width + translation.x + 20
                     self.archiveIconImageView.center.x = translation.x - 20
+                    self.deleteIconImageView.center.x = translation.x - 20
 
+                    
+                }
+                
+                if (singleImageOriginX <= -60 && singleImageOriginX > -260){
+                    // yellow background and later icon
+                    self.backgroundView.backgroundColor=UIColor(red: CGFloat(240.0/255.0), green: CGFloat(210.0/255.0), blue: CGFloat(70.0/255.0), alpha: CGFloat(1.0))
+                    self.laterIconImageView.alpha = 1
+                    self.listIconImageView.alpha = 0
+                }
+                else if singleImageOriginX <= -260 {
+                    // brown background and list icon
+                    self.backgroundView.backgroundColor = UIColor(red: CGFloat(215.0/255.0), green: CGFloat(166.0/255.0), blue: CGFloat(120.0/255.0), alpha: CGFloat(1.0))
+                    self.laterIconImageView.alpha = 0
+                    self.listIconImageView.alpha = 1
+                }
+                else if (singleImageOriginX >= 60 && singleImageOriginX < 260){
+                    // green background and archive icon
+                    self.backgroundView.backgroundColor = UIColor(red: CGFloat(116.0/255.0), green: CGFloat(215.0/255.0), blue: CGFloat(104.0/255.0), alpha: CGFloat(1.0))
+                    self.archiveIconImageView.alpha = 1
+                    self.deleteIconImageView.alpha = 0
+                }
+                else if (singleImageOriginX > 260){
+                    // red background and delete icon
+                    self.backgroundView.backgroundColor = UIColor(red: CGFloat(233.0/255.0), green: CGFloat(85.0/255.0), blue: CGFloat(59.0/255.0), alpha: CGFloat(1.0))
+                    self.archiveIconImageView.alpha = 0
+                    self.deleteIconImageView.alpha = 1
                     
                 }
                 
@@ -103,20 +128,41 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                     //nothing
             })
             
-            
-            
         }
         
         // notice when panning is completed
         else if sender.state == UIGestureRecognizerState.Ended{
+            var swipeLeftShort = singleImageOriginX > -60 && singleImageOriginX < 60
+            var swipeLeftLong = singleImageOriginX >= 60 && velocity.x < 0
+            var swipeRightShort = singleImageOriginX <= -60 && velocity.x > 0
+            var singleMessageReset = swipeLeftShort || swipeLeftLong || swipeRightShort
+
             UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
-                self.singleImageView.center.x = self.originalSingleImage.x
+                if singleMessageReset {
+                    self.singleImageView.center.x = self.originalSingleImage.x
+                }
+                
+                else if singleImageOriginX >= 60 && velocity.x > 0 {
+                    
+                    
+                }
+                
                 }, completion: { (completed) -> Void in
                     //nothing
             })
         }
         
         
+        
+    }
+    func hideMessage(){
+        UIView.animateWithDuration(0.3, delay: 0, options: [], animations: { () -> Void in
+            self.singleImageView.hidden = true
+            self.backgroundView.center.y -= self.singleImageView.frame.height
+            self.feedImageView.center.y -= self.singleImageView.frame.height
+            }) { (completed) -> Void in
+                //nothing
+        }
         
     }
 
